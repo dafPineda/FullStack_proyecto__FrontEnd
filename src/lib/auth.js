@@ -1,11 +1,18 @@
 export function getToken() {
-  return localStorage.getItem('token');
+  if (typeof window !== "undefined") {
+    return localStorage.getItem('token');
+  }
+  return null;
 }
 
 export function setToken(token) {
-  localStorage.setItem('token', token);
+  if (typeof window !== "undefined") {
+    localStorage.setItem('token', token);
+  }
 }
 
 export function clearToken() {
-  localStorage.removeItem('token');
-} 
+  if (typeof window !== "undefined") {
+    localStorage.removeItem('token');
+  }
+}
