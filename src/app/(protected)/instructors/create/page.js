@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiFetch } from '@/lib/api';
-import { clearToken } from '@/lib/auth';
+import { getToken, clearToken } from '@/lib/auth';
 import StatusBox from '@/components/StatusBox';
 
-export default async function create(){
-    const router = useRouter();
+export default function Create(){
+  const router = useRouter();
 
   const [name, setName] = useState('');
   const [phone, setPhones] = useState('');
@@ -39,8 +39,13 @@ export default async function create(){
 
     setLoading(true);
     try {
+      const token = getToken();
       await apiFetch('/instructors/create', {
         method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({ 
             name: name.trim(), 
             phone: phone,
@@ -50,15 +55,17 @@ export default async function create(){
       });
 
       setSuccess('Instructor created');
-      setNombre('');
-      setPrecio('');
+      setName('');
+      setMail('');
+      setPhones('');
+      setTurn('');
     } catch (error) {
       if (error.status === 403) {
         setError('Authorization is needed (Admin)');
         return;
       }
       if (error.status === 401) {
-        clearToken();
+        clearToken()
         router.replace('/login');
         return;
       }
@@ -68,41 +75,64 @@ export default async function create(){
     }
   }
 return (
-    <main className='flex flex-col'>
-      <h1>Agregar instructor</h1>
 
-      <form onSubmit={create}>
-        <div>
-          <input
-            placeholder='*Name'
-            value={name}
-            onChange={(e)=>setName(e.target.value)}
-          />
-        </div>
-        <div>
-          <input
-            placeholder='* Phone'
-            value={phone}
-            onChange={(e)=>setPhones(e.target.value)}
-          />
-        </div>
-        <div>
-          <input
-            placeholder='* Email'
-            value={mail}
-            onChange={(e)=>setMail(e.target.value)}
-          />
-        </div>
-        <div>
-          <input
-            placeholder='Turn (Matutino/Vespertino)'
-            value={turn}
-            onChange={(e)=>setTurn(e.target.value)}
-          />
-        </div>
-        <button type="submit" disabled={loading}>{loading ? 'Adding...' : 'Add'}</button>
-      </form>
+  <main className="flex justify-center items-center min-h-screen bg-gray-100">
+  
+  <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
+
+    <h1 className="text-2xl font-bold mb-6 text-center text-black">
+      Agregar instructor
+    </h1>
+
+    <form 
+      onSubmit={create}
+      className="flex flex-col gap-4"
+    >
+
+      <input
+        placeholder="*Name"
+        value={name}
+        onChange={(e)=>setName(e.target.value)}
+        className="border rounded-md p-2 w-full text-gray-600"
+      />
+
+      <input
+        placeholder="*Phone"
+        value={phone}
+        onChange={(e)=>setPhones(e.target.value)}
+        className="border rounded-md p-2 w-full text-gray-600"
+      />
+
+      <input
+        placeholder="*Email"
+        value={mail}
+        onChange={(e)=>setMail(e.target.value)}
+        className="border rounded-md p-2 w-full text-gray-600"
+      />
+
+      <input
+        placeholder="Turn (Matutino/Vespertino)"
+        value={turn}
+        onChange={(e)=>setTurn(e.target.value)}
+        className="border rounded-md p-2 w-full text-gray-600"
+      />
+
+      <button
+        type="submit"
+        disabled={loading}
+        className="border bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 cursor-pointer transition"
+      >
+        {loading ? "Agregando..." : "Agregar"}
+      </button>
+
+    </form>
+
+    <div className="mt-4">
       <StatusBox loading={loading} error={error} success={success} />
-    </main>
+    </div>
+
+  </div>
+
+</main>
   )
 }

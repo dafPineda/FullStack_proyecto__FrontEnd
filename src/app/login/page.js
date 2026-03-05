@@ -20,7 +20,7 @@ export default function Login() {
   useEffect(() => {
     const token = getToken();
     if (token) {
-      router.replace('/instructors/create');
+      router.replace('/');
     }
     return;
   }, [router]);
@@ -51,7 +51,8 @@ export default function Login() {
     }
       setToken(data.token);
       setSuccess('Login Correcto');
-      router.replace('/instructors');
+      router.replace('/');
+      router.refresh(); 
     } catch (err) {
       setError('Error de red / API no disponible');
     } finally {
