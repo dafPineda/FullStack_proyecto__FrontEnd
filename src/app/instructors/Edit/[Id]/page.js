@@ -1,6 +1,6 @@
 'use client'
 import editInstructor from "@/app/utils/api/editInstructore"
-import getInstructorId from "@/app/utils/api/getInstructorId";
+//import getInstructorId from "@/app/utils/api/getInstructorId";
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { clearToken } from '@/lib/auth';
